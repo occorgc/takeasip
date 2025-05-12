@@ -1,0 +1,2 @@
+# Questo file è un segnaposto per lo sfondo del DMG
+# Dovrebbe essere sostituito con un'immagine reale in formato PNG

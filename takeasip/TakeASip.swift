@@ -12,12 +12,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var animationWindow: NSWindow?
     private var timer: Timer?
-    private let reminderInterval: TimeInterval = 900 // 15 minutes
+    private var reminderInterval: TimeInterval = 900 // 15 minutes default
     private let reminderTolerance: TimeInterval = 60 // 1 minute tolerance
+    private let defaultIntervals = [
+        300: "5 minutes",
+        600: "10 minutes",
+        900: "15 minutes",
+        1800: "30 minutes",
+        3600: "1 hour"
+    ]
+    private let userDefaultsKey = "reminderInterval"
     
     // MARK: - Lifecycle
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        loadSettings()
         requestNotificationPermission()
         setupStatusItem()
         startTimer()
@@ -31,25 +40,44 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("TakeASip terminating")
     }
     
+    // MARK: - Settings Management
+    private func loadSettings() {
+        if let savedInterval = UserDefaults.standard.object(forKey: userDefaultsKey) as? TimeInterval {
+            reminderInterval = savedInterval
+            print("Loaded saved interval: \(formatTimeInterval(savedInterval))")
+        } else {
+            print("Using default interval: \(formatTimeInterval(reminderInterval))")
+        }
+    }
+    
+    private func saveSettings() {
+        UserDefaults.standard.set(reminderInterval, forKey: userDefaultsKey)
+        print("Saved interval: \(formatTimeInterval(reminderInterval))")
+    }
+    
+    private func formatTimeInterval(_ interval: TimeInterval) -> String {
+        return defaultIntervals[Int(interval)] ?? "\(Int(interval)) seconds"
+    }
+    
     // MARK: - Setup
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         guard let button = statusItem?.button else {
-            print("Errore: Impossibile creare l'icona nella barra di stato.")
+            print("Error: Unable to create status bar icon.")
             NSApp.terminate(nil)
             return
         }
             
         button.image = NSImage(systemSymbolName: "drop.fill", accessibilityDescription: "TakeASip")
-        button.toolTip = "TakeASip - Promemoria per bere acqua"
+        button.toolTip = "TakeASip - Water Reminder"
             
         let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Bevi ora", action: #selector(showReminderNow), keyEquivalent: "r"))
+        menu.addItem(NSMenuItem(title: "Drink Now", action: #selector(showReminderNow), keyEquivalent: "r"))
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Impostazioni", action: #selector(openSettings), keyEquivalent: ","))
-        menu.addItem(NSMenuItem(title: "Informazioni", action: #selector(showAbout), keyEquivalent: "i"))
+        menu.addItem(NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: ","))
+        menu.addItem(NSMenuItem(title: "About", action: #selector(showAbout), keyEquivalent: "i"))
         menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Esci", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem?.menu = menu
     }
     
@@ -59,16 +87,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self?.showReminder()
         }
         timer?.tolerance = reminderTolerance
-        print("Timer avviato (intervallo di 15 minuti).")
+        print("Timer started (interval: \(formatTimeInterval(reminderInterval))).")
+    }
+    
+    private func restartTimer() {
+        startTimer()
     }
     
     private func requestNotificationPermission() {
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound]) { granted, error in
             if let error = error {
-                print("Errore durante la richiesta di permessi per le notifiche: \(error)")
+                print("Error requesting notification permission: \(error)")
             } else {
-                print("Permesso per le notifiche: \(granted ? "concesso" : "negato")")
+                print("Notification permission: \(granted ? "granted" : "denied")")
             }
         }
     }
@@ -76,42 +108,86 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Actions
     @objc private func openSettings() {
         let alert = NSAlert()
-        alert.messageText = "Impostazioni"
-        alert.informativeText = "Qui potrai personalizzare l'intervallo dei promemoria e l'animazione."
-        alert.addButton(withTitle: "OK")
+        alert.messageText = "Settings"
+        alert.informativeText = "Choose the reminder interval:"
+        
+        // Create a popup button for interval selection
+        let accessoryView = NSView(frame: NSRect(x: 0, y: 0, width: 250, height: 30))
+        let popupButton = NSPopUpButton(frame: NSRect(x: 0, y: 0, width: 250, height: 25))
+        
+        // Sort intervals by time value
+        let sortedIntervals = defaultIntervals.sorted { $0.key < $1.key }
+        
+        // Add items to popup
+        for (interval, description) in sortedIntervals {
+            popupButton.addItem(withTitle: description)
+            // Store the interval as tag in the menu item
+            if let lastItem = popupButton.lastItem {
+                lastItem.tag = interval
+            }
+        }
+        
+        // Select current interval
+        for (index, (interval, _)) in sortedIntervals.enumerated() {
+            if interval == Int(reminderInterval) {
+                popupButton.selectItem(at: index)
+                break
+            }
+        }
+        
+        accessoryView.addSubview(popupButton)
+        alert.accessoryView = accessoryView
+        
+        alert.addButton(withTitle: "Save")
+        alert.addButton(withTitle: "Cancel")
+        
         NSApp.activate(ignoringOtherApps: true)
-        alert.runModal()
+        let response = alert.runModal()
+        
+        if response == .alertFirstButtonReturn { // Save button
+            if let selectedItem = popupButton.selectedItem {
+                // Get the selected interval from the tag
+                let newInterval = TimeInterval(selectedItem.tag)
+                
+                // Only update if changed
+                if newInterval != reminderInterval {
+                    reminderInterval = newInterval
+                    saveSettings()
+                    restartTimer()
+                }
+            }
+        }
     }
     
     @objc private func showAbout() {
         let alert = NSAlert()
         alert.messageText = "TakeASip"
-        alert.informativeText = "Un semplice promemoria per bere acqua.\nCreato da Rocco Geremia Ciccone.\nVersione 1.0"
+        alert.informativeText = "A simple water reminder.\nCreated by occorgc.\nVersion 1.0"
         alert.addButton(withTitle: "OK")
         NSApp.activate(ignoringOtherApps: true)
         alert.runModal()
     }
 
     @objc private func showReminderNow() {
-        print("Visualizzazione manuale del promemoria.")
+        print("Manually showing reminder.")
         showReminder()
     }
     
     // MARK: - Show Reminder
     private func showReminder() {
-        print("Visualizzazione del promemoria.")
+        print("Showing reminder.")
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            // Invia anche una notifica del sistema
+            // Also send a system notification
             self.sendNotification()
 
             let windowWidth: CGFloat = 180
             let windowHeight: CGFloat = 150
 
-            // Creiamo la finestra solo se non esiste ancora
+            // Only create the window if it doesn't exist yet
             if self.animationWindow == nil {
-                print("Creazione della finestra di animazione.")
+                print("Creating animation window.")
                 let window = NSWindow(
                     contentRect: NSRect(x: 0, y: 0, width: windowWidth, height: windowHeight),
                     styleMask: [.borderless],
@@ -153,7 +229,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     window?.orderOut(nil)
                 }
             } else {
-                print("Errore: Impossibile ottenere lo schermo principale o l'istanza della finestra.")
+                print("Error: Unable to get main screen or window instance.")
             }
         }
     }
@@ -161,13 +237,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func sendNotification() {
         let content = UNMutableNotificationContent()
         content.title = "TakeASip"
-        content.body = "È ora di bere un po' d'acqua!"
+        content.body = "It's time to drink some water!"
         content.sound = UNNotificationSound.default
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("Errore nell'invio della notifica: \(error)")
+                print("Error sending notification: \(error)")
             }
         }
     }

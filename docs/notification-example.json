@@ -1,0 +1,12 @@
+# Esempio di contenuto della notifica
+
+{
+  "aps": {
+    "alert": {
+      "title": "TakeASip",
+      "body": "È ora di bere un po' d'acqua!"
+    },
+    "sound": "default"
+  },
+  "Simulator Target Bundle": "com.roccociccone.TakeASip"
+}

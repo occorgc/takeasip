@@ -1,122 +1,92 @@
-# TakeASip
+# TakeASip 💧
 
-<p align="center">
-  <img src="docs/images/icon.png" alt="TakeASip Logo" width="200">
-</p>
+TakeASip è una semplice applicazione per macOS che ti ricorda di bere acqua durante la giornata, mostrando notifiche e un'elegante animazione di una goccia d'acqua.
 
-<p align="center">
-  <strong>Un'applicazione minimale per macOS che ti ricorda di bere acqua regolarmente.</strong>
-</p>
-
-<p align="center">
-  <a href="#caratteristiche">Caratteristiche</a> •
-  <a href="#installazione">Installazione</a> •
-  <a href="#uso">Uso</a> •
-  <a href="#sviluppo">Sviluppo</a> •
-  <a href="#licenza">Licenza</a>
-</p>
+![TakeASip Screenshot](docs/images/screenshot.png)
 
 ## Caratteristiche
 
-- ☑️ Icona nella barra di stato per accesso rapido
-- ☑️ Promemoria ogni 15 minuti con una piacevole animazione
-- ☑️ Design minimalista e non intrusivo
-- ☑️ Notifiche di sistema
-- ☑️ Avvio automatico (opzionale)
-- ☑️ Supporta temi chiari e scuri di macOS
-- ☑️ Leggero e con basso consumo di memoria
-- ☑️ Non richiede connessione internet
+- ⏰ Timer personalizzabile (5 min, 10 min, 15 min, 30 min, 1 ora)
+- �� Animazione elegante con una goccia d'acqua che cade
+- 🔔 Notifiche del sistema
+- 🖥️ Si integra nella barra di stato di macOS
+- 🚀 Leggero e non invasivo
 
-## Screenshots
+## Requisiti
 
-<p align="center">
-  <img src="docs/images/screenshot.png" alt="Screenshot" width="600">
-</p>
+- macOS 10.15 (Catalina) o superiore
+- Almeno 10MB di spazio su disco
 
 ## Installazione
 
-### Download diretto
+### Metodo 1: Installer DMG
 
-1. Scarica il file `.dmg` dalla [pagina delle release](https://github.com/tuonome/takeasip/releases)
-2. Apri il file `.dmg` e trascina l'app nella cartella Applicazioni
-3. Apri l'app dalla cartella Applicazioni
-4. (Opzionale) Imposta l'app per avviarsi all'accensione
+1. Scarica il file DMG dalla [pagina Releases](https://github.com/occorgc/takeasip/releases)
+2. Apri il file DMG
+3. Trascina l'app TakeASip nella cartella Applicazioni
+4. Apri l'app dalla cartella Applicazioni
 
-### Installazione da terminale usando il Makefile
-
-Se hai scaricato il codice sorgente, puoi compilare e installare l'app usando:
+### Metodo 2: Compilazione da sorgente
 
 ```bash
+# Clona il repository
+git clone https://github.com/occorgc/takeasip.git
 cd takeasip
+
+# Compila l'app
+make build
+
+# (Opzionale) Installa l'app
 make install
+
+# (Opzionale) Crea un file DMG
+make dmg
 ```
 
-## Uso
+## Utilizzo
 
-### Aggiungere TakeASip agli elementi di login
+1. Apri l'app TakeASip
+2. Un'icona a forma di goccia apparirà nella barra di stato
+3. Fai clic sull'icona per accedere al menu
+4. Da qui puoi:
+   - Mostrare un promemoria immediato ("Drink Now")
+   - Modificare le impostazioni del timer ("Settings")
+   - Visualizzare informazioni sull'app ("About")
+   - Chiudere l'app ("Quit")
 
-1. Apri le Preferenze di Sistema
-2. Vai su "Utenti e Gruppi"
-3. Seleziona la scheda "Elementi login"
-4. Clicca sul pulsante "+" e seleziona TakeASip
+## Personalizzazione
 
-### Menu
-
-Cliccando sull'icona nella barra di stato avrai accesso a:
-
-- **Bevi ora**: Mostra immediatamente il promemoria
-- **Impostazioni**: Configura l'app (funzionalità future)
-- **Informazioni**: Mostra informazioni sull'app
-- **Esci**: Chiude l'app
-
-## Requisiti di sistema
-
-- macOS 11.0 (Big Sur) o superiore
-- Memoria: 10MB
-- Spazio su disco: 5MB
+Puoi personalizzare l'intervallo di tempo tra le notifiche nelle Impostazioni, scegliendo tra:
+- 5 minuti
+- 10 minuti
+- 15 minuti (predefinito)
+- 30 minuti
+- 1 ora
 
 ## Sviluppo
 
-TakeASip è sviluppato in Swift utilizzando SwiftUI e AppKit. Per eseguire il progetto:
+Questo progetto è scritto in Swift e utilizza il framework AppKit/SwiftUI per l'interfaccia utente.
 
-1. Clona il repository
-   ```bash
-   git clone https://github.com/tuonome/takeasip.git
-   cd takeasip
-   ```
+### Struttura del progetto
 
-2. Compila e avvia l'app
-   ```bash
-   make run
-   ```
-
-3. Per creare un file DMG per la distribuzione
-   ```bash
-   make dmg
-   ```
-
-## Roadmap
-
-- [ ] Personalizzazione degli intervalli di tempo
-- [ ] Statistiche sul consumo di acqua
-- [ ] Temi personalizzati
-- [ ] Supporto multilingua
-- [ ] Sincronizzazione cross-device
-
-## Contribuire
-
-Le contribuzioni sono benvenute! Leggi [CONTRIBUTING.md](CONTRIBUTING.md) per maggiori dettagli su come contribuire.
+```
+takeasip/
+├── scripts/            # Script di utilità per il build e il packaging
+├── takeasip/           # Codice sorgente dell'applicazione
+│   ├── TakeASip.swift  # File sorgente principale
+│   └── Resources/      # Risorse (icone, file plist, ecc.)
+├── Makefile            # Comandi per compilare e distribuire l'app
+└── docs/               # Documentazione
+```
 
 ## Licenza
 
-Questo progetto è rilasciato sotto licenza MIT. Vedi il file [LICENSE](LICENSE) per i dettagli.
+Questo progetto è rilasciato sotto la licenza MIT. Vedi il file [LICENSE](LICENSE) per i dettagli.
 
-## Crediti
+## Contatti
 
-Sviluppato con ♥️ da Rocco Geremia Ciccone.
+Creato da occorgc - [GitHub](https://github.com/occorgc)
 
 ---
 
-<p align="center">
-  Made with ❤️ in Italia
-</p>
+*Mantieniti idratato! 💧*

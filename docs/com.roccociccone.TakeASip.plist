@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.roccociccone.TakeASip</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Applications/TakeASip.app/Contents/MacOS/TakeASip</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <false/>
+    <key>StandardErrorPath</key>
+    <string>/tmp/TakeASip.err</string>
+    <key>StandardOutPath</key>
+    <string>/tmp/TakeASip.out</string>
+</dict>
+</plist>

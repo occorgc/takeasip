@@ -1,13 +1,19 @@
-# Xcode
-#
-# gitignore file per progetti Xcode e Swift
-#
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-## Build generati dall'utente
+# Xcode
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
 build/
 DerivedData/
-
-## Varie impostazioni
+*.moved-aside
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -16,54 +22,27 @@ DerivedData/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata/
-
-## Altri stati
-*.moved-aside
-*.xccheckout
-*.xcscmblueprint
-
-## Obj-C/Swift specifici
-*.hmap
-*.ipa
-*.dSYM.zip
-*.dSYM
-
-## Playgrounds
-timeline.xctimeline
-playground.xcworkspace
 
 # Swift Package Manager
 .build/
+.swiftpm/
 
-# CocoaPods
-Pods/
-Podfile.lock
+# App specific
+release/
+build/
 
-# Carthage
-Carthage/Build
+# Temporary files
+*.swp
+*.swo
+*~
 
-# fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
+# App archives
+*.dmg
+*.zip
+*.pkg
+*.app
 
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-Icon
-._*
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+# Python related
+__pycache__/
+*.py[cod]
+*$py.class
