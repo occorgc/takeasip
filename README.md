@@ -2,7 +2,7 @@
 
 TakeASip è una semplice applicazione per macOS che ti ricorda di bere acqua durante la giornata, mostrando notifiche e un'elegante animazione di una goccia d'acqua.
 
-![TakeASip Screenshot](docs/images/screenshot.png)
+![TakeASip Screenshot](docs/images/takeasip.gif)
 
 ## Caratteristiche
 
